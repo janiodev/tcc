@@ -1,0 +1,117 @@
+{
+    "namespace": "dev.janio",
+    "type": "record",
+    "name": "DetectorDeIncendio",
+    "doc": "Contem os dados que podem ser capturados por um dos detectores de incendio.",
+    "fields": [
+        {
+            "name": "dht11",
+            "doc": "Sensor de umidade e temperatura | Frequência das medições: 6 segundos",
+            "type": {
+                "type": "record",
+                "name": "SensorDht11",
+                "fields": [
+                    {
+                        "name": "umidade",
+                        "doc": "Faixa de medição: 20% a 90% RH | Acurácia: +/- 5% RH | Escala: 1% RH",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "doc": "Faixa de medição: 0 a 50 °C | Acurácia: +/- 2 °C | Escala: 1 °C",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "dht22",
+            "doc": "Sensor de umidade e temperatura | Frequência das medições: 2 segundos",
+            "type": {
+                "type": "record",
+                "name": "SensorDht22",
+                "fields": [
+                    {
+                        "name": "umidade",
+                        "doc": "Faixa de medição: 0% a 100% RH | Acurácia: +/- 5% RH | Escala: 0,1% RH",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "doc": "Faixa de medição: -40 a 80 °C | Acurácia: +/- 0,5 °C | Escala: 0,1 °C",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "flame01",
+            "doc": "Detector de variações no comprimento de onda de luz | Frequência de medições: desconhecida",
+            "type": {
+                "type": "record",
+                "name": "SensorFlame01",
+                "fields": [
+                    {
+                        "name": "espectroDeLuz",
+                        "doc": "Faixa de medição: 760 nm a 1100 nm | Acurácia: desconhecida | Escala: desconhecida",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "doc": "Faixa de medição: -25 °C a 85 °C | Acurácia: desconhecida | Escala: desconhecida",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "mq2",
+            "doc": "Detector de gases combustíveis e fumaça",
+            "type": {
+                "type": "record",
+                "name": "SensorMq2",
+                "fields": [
+                    {
+                        "name": "gasCombustivel",
+                        "doc": "Faixa de medição: 300 a 10.000 ppm | Acurácia: desconhecida | Escala: desconhecida",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "mq9",
+            "doc": "Detectar gases combustíveis e CO",
+            "type": {
+                "type": "record",
+                "name": "SensorMq9",
+                "fields": [
+                    {
+                        "name": "gasCombustivel",
+                        "doc": "Faixa de medição: 100 a 10.000 ppm | Acurácia: desconhecida | Escala: desconhecida",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "co2",
+                        "doc": "Faixa de medição: 10 a 1.000 ppm | Acurácia: desconhecida | Escala: desconhecida",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        }
+    ]
+}

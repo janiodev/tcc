@@ -1,0 +1,12 @@
+dev/janio/sensor_mq9.class
+dev/janio/sensor_dht22$Builder.class
+dev/janio/sensor_dht22.class
+dev/janio/sensor_mq2.class
+dev/janio/sensor_flame01$Builder.class
+dev/janio/detector_de_incendio.class
+dev/janio/sensor_mq9$Builder.class
+dev/janio/sensor_dht11$Builder.class
+dev/janio/sensor_mq2$Builder.class
+dev/janio/detector_de_incendio$Builder.class
+dev/janio/sensor_flame01.class
+dev/janio/sensor_dht11.class
