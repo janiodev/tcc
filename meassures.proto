@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+message detector_de_incendio {
+    message dht11 {
+        optional int32 umidade = 1;
+        optional int32 temperatura = 2;
+    }
+    message dht22 {
+        optional int32 umidade = 1;
+        optional int32 temperatura = 2;
+    }
+    message flame01 {
+        optional int32 espectro_de_luz = 1;
+        optional int32 temperatura = 2;
+    }
+    message mq2 {
+        optional int32 gas_combustivel = 1;
+    }
+    message mq9 {
+        optional int32 gas_combustivel = 1;
+        optional int32 co2 = 2;
+    }
+}

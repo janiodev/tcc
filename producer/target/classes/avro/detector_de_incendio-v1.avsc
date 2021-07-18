@@ -1,0 +1,103 @@
+{
+    "namespace": "dev.janio",
+    "doc": "Contem os dados que podem ser capturados por um dos detectores de incendio.",
+    "type": "record",
+    "name": "detector_de_incendio",
+    "fields": [
+        {
+            "name": "dht11",
+            "type": {
+                "type": "record",
+                "name": "sensor_dht11",
+                "fields": [
+                    {
+                        "name": "umidade",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "dht22",
+            "type": {
+                "type": "record",
+                "name": "sensor_dht22",
+                "fields": [
+                    {
+                        "name": "umidade",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "flame01",
+            "type": {
+                "type": "record",
+                "name": "sensor_flame01",
+                "fields": [
+                    {
+                        "name": "espectro_de_luz",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "temperatura",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "mq2",
+            "type": {
+                "type": "record",
+                "name": "sensor_mq2",
+                "fields": [
+                    {
+                        "name": "gas_combustivel",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        },
+        {
+            "name": "mq9",
+            "type": {
+                "type": "record",
+                "name": "sensor_mq9",
+                "fields": [
+                    {
+                        "name": "gas_combustivel",
+                        "type": ["null", "int"],
+                        "default": null
+                    },
+                    {
+                        "name": "co2",
+                        "type": ["null", "int"],
+                        "default": null
+                    }
+                ]
+            },
+            "default": {}
+        }
+    ]
+}
