@@ -1,0 +1,23 @@
+version: '3.2'
+
+services:
+  consumer:
+    image: janio/consumer
+    deploy:
+      replicas: 1
+    networks:
+      - kafka_kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: broker1:9094
+      KAFKA_GROUP_ID: detector-de-incendio-consumer-group-v1
+      KAFKA_ENABLE_AUTO_COMMIT: 'false'
+      KAFKA_ISOLATION_LEVEL: read_committed
+      KAFKA_AUTO_OFFSET_RESET: earliest
+      KAFKA_GROUP_INSTANCE_ID: 'consumer-{{.Task.Slot}}'
+      KAFKA_SCHEMA_REGISTRY_URL: http://karapace-registry:8081
+      KAFKA_SPECIFIC_AVRO_READER: 'true'
+      NOME_DO_TOPICO: detector-de-incendio-avro
+
+networks:
+  kafka_kafka:
+    external: true

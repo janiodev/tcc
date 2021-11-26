@@ -6,31 +6,54 @@ import dev.janio.SensorDht22;
 import dev.janio.SensorFlame01;
 import dev.janio.SensorMq2;
 import dev.janio.SensorMq9;
+import dev.janio.producer.environment.DefaultEnvironmentProperties;
+import dev.janio.producer.environment.EnvironmentProperties;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ProducerApp {
+    private static final EnvironmentProperties env = new DefaultEnvironmentProperties();
+    private static final String KAFKA_BOOTSTRAP_SERVERS = env.getEnvironmentProperties("kafka.bootstrap.servers").orElseThrow();
+    private static final String KAFKA_ACKS = env.getEnvironmentProperties("kafka.acks").orElseThrow();
+    private static final String KAFKA_ENABLE_IDEMPOTENCE = env.getEnvironmentProperties("kafka.enable.idempotence").orElseThrow();
+    private static final String KAFKA_RETRIES = env.getEnvironmentProperties("kafka.retries").orElseThrow();
+    private static final String KAFKA_TRANSACTIONAL_ID = env.getEnvironmentProperties("kafka.transactional.id").orElseThrow();
+    private static final String KAFKA_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION = env.getEnvironmentProperties("kafka.max.in.flight.requests.per.connection").orElseThrow();
+    private static final String KAFKA_SCHEMA_REGISTRY_URL = env.getEnvironmentProperties("kafka.schema.registry.url").orElseThrow();
+    private static final String NOME_DO_TOPICO = env.getEnvironmentProperties("nome.do.topico").orElseThrow();
+    private static final int TEMPO_DE_ESPERA_EM_MILISEGUNDOS = Integer.parseInt(env.getEnvironmentProperties("tempo.de.espera.em.milisegundos").orElseThrow());
+    private static final int TEMPO_DE_ESPERA_EM_NANOSEGUNDOS = Integer.parseInt(env.getEnvironmentProperties("tempo.de.espera.em.nanosegundos").orElseThrow());
+
     public static void main(String[] args) {
         var properties = new Properties();
         // normal producer
-        properties.setProperty("bootstrap.servers", "127.0.0.1:9092");
-        properties.setProperty("acks", "all");
-        properties.setProperty("retries", "10");
+        properties.setProperty("bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS);
+        properties.setProperty("acks", KAFKA_ACKS);
+        properties.setProperty("retries", KAFKA_RETRIES);
+        //exactly-once
+        properties.setProperty("enable.idempotence", KAFKA_ENABLE_IDEMPOTENCE);
+        properties.setProperty("transactional.id", KAFKA_TRANSACTIONAL_ID);
+        properties.setProperty("max.in.flight.requests.per.connection", KAFKA_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION);
         // avro part
         properties.setProperty("key.serializer", StringSerializer.class.getName());
         properties.setProperty("value.serializer", KafkaAvroSerializer.class.getName());
-        properties.setProperty("schema.registry.url", "http://127.0.0.1:8081");
+        properties.setProperty("schema.registry.url", KAFKA_SCHEMA_REGISTRY_URL);
 
         var producer = new KafkaProducer<String, DetectorDeIncendio>(properties);
 
-        var topic = "detector-de-incendio-avro";
+        //exactly-once
+        producer.initTransactions();
 
-        var tempoDeEspera = 5;
+        var counter = 0;
+        var startTime = System.nanoTime();
+        var nanoToSeconds = 0.000000001;
 
         while (true) {
             try {
@@ -56,25 +79,38 @@ public class ProducerApp {
                                 .build())
                         .build();
 
-                var producerRecord = new ProducerRecord<String, DetectorDeIncendio>(
-                        topic, detectorDeIncendio
+                var producerRecord = new ProducerRecord<String, DetectorDeIncendio>(NOME_DO_TOPICO, detectorDeIncendio);
+
+                // debug
+                //System.out.println(detectorDeIncendio);
+
+                producer.beginTransaction();
+
+                producer.send(producerRecord//, (metadata, exception) -> {
+                //    if (exception == null) {
+                //        System.out.println(metadata);
+                //    } else {
+                //        exception.printStackTrace();
+                //    }
+                //}
                 );
 
-                System.out.println(detectorDeIncendio);
+                producer.commitTransaction();
 
-                producer.send(producerRecord, (metadata, exception) -> {
-                    if (exception == null) {
-                        System.out.println(metadata);
-                    } else {
-                        exception.printStackTrace();
-                    }
-                });
+                counter++;
+                var timer = ( System.nanoTime() - startTime ) * nanoToSeconds;
+                var throughput = counter / timer;
+                System.out.println("Mensagens: " + counter + "\nTempo: " + timer + "\nThroughput: " + throughput + " msg/s");
 
-                Thread.sleep(tempoDeEspera * 1000);
-            } catch (InterruptedException ie){
-                Thread.currentThread().interrupt();
-                producer.flush();
+            //    Thread.sleep(TEMPO_DE_ESPERA_EM_MILISEGUNDOS, TEMPO_DE_ESPERA_EM_NANOSEGUNDOS);
+            //} catch (InterruptedException ie){
+            //    Thread.currentThread().interrupt();
+            //    producer.flush();
+            //    producer.close();
+            } catch(ProducerFencedException e) {
                 producer.close();
+            } catch(KafkaException e) {
+                producer.abortTransaction();
             }
         }
     }
