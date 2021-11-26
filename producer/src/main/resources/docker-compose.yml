@@ -1,0 +1,24 @@
+version: '3.2'
+
+services:
+  producer:
+    image: janio/producer
+    deploy:
+      replicas: 1
+    networks:
+      - kafka_kafka
+    environment:
+      KAFKA_ACKS: all
+      KAFKA_RETRIES: 5
+      KAFKA_ENABLE_IDEMPOTENCE: 'true'
+      KAFKA_BOOTSTRAP_SERVERS: broker1:9094
+      KAFKA_MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION: 5
+      KAFKA_TRANSACTIONAL_ID: 'producer-{{.Task.Slot}}'
+      KAFKA_SCHEMA_REGISTRY_URL: http://karapace-registry:8081
+      NOME_DO_TOPICO: detector-de-incendio-avro
+      TEMPO_DE_ESPERA_EM_MILISEGUNDOS: 0
+      TEMPO_DE_ESPERA_EM_NANOSEGUNDOS: 100000 #MAX: 999999
+
+networks:
+  kafka_kafka:
+    external: true

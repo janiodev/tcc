@@ -2,12 +2,21 @@ version: '3.2'
 
 services:
 
-  zookeeper:
+  zookeeper1:
     image: zookeeper:3.7.0
     ports:
       - "2181:2181"
+    networks:
+      - kafka
+    deploy:
+      placement:
+        constraints:
+          - node.labels.kafka==1
+    volumes:
+      - zookeeper1-data:/data
+      - zookeeper1-logs:/datalog
 
-  broker:
+  broker1:
     image: janio/kafka:2.7.0-arm64v8
     ports:
       - target: 9094
@@ -16,16 +25,32 @@ services:
         mode: host
     environment:
       HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
       KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_LOG_RETENTION_HOURS: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # deve ser 3 em produção
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1 # deve ser 2 em produção
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      # facilita os testes
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes:
+      - kafka1-data:/kafka
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kafka
+    deploy:
+      placement:
+        constraints:
+          - node.labels.kafka==1
 
   karapace-registry:
-    image: janio/karapace:2.0.1
+    image: janio/karapace:2.0.1-arm64v8
     entrypoint:
       - /bin/bash
       - /opt/karapace/start.sh
@@ -34,7 +59,7 @@ services:
       - "8081:8081"
     environment:
       KARAPACE_REGISTRY_ADVERTISED_HOSTNAME: karapace-registry
-      KARAPACE_REGISTRY_BOOTSTRAP_URI: broker:9094
+      KARAPACE_REGISTRY_BOOTSTRAP_URI: broker1:9094
       KARAPACE_REGISTRY_PORT: 8081
       KARAPACE_REGISTRY_HOST: 0.0.0.0
       KARAPACE_REGISTRY_CLIENT_ID: karapace
@@ -43,9 +68,15 @@ services:
       KARAPACE_REGISTRY_TOPIC_NAME: _schemas
       KARAPACE_REGISTRY_LOG_LEVEL: WARNING
       KARAPACE_REGISTRY_COMPATIBILITY: FULL
+    networks:
+      - kafka
+    deploy:
+      placement:
+        constraints:
+          - node.labels.kafka==1
 
   karapace-rest:
-    image: janio/karapace:2.0.1
+    image: janio/karapace:2.0.1-arm64v8
     entrypoint:
       - /bin/bash
       - /opt/karapace/start.sh
@@ -66,3 +97,23 @@ services:
       # new entries may need to be added to containers/start.sh
       KARAPACE_REST_ADMIN_METADATA_MAX_AGE: 0
       KARAPACE_REST_LOG_LEVEL: WARNING
+    networks:
+      - kafka
+    deploy:
+      placement:
+        constraints:
+          - node.labels.kafka==1
+
+networks:
+  kafka:
+    
+volumes:
+  kafka1-data:
+    #driver: s3fs
+    #name: "oci-kafka1-$DEPLOY_ID/data"
+  zookeeper1-data:
+    #driver: s3fs
+    #name: "oci-zookeeper1-$DEPLOY_ID/data"
+  zookeeper1-logs:
+    #driver: s3fs
+    #name: "oci-zookeeper1-$DEPLOY_ID/log"

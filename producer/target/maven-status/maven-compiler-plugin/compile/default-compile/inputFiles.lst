@@ -1,6 +1,9 @@
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/sensor_dht22.java
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/sensor_mq9.java
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/detector_de_incendio.java
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/sensor_mq2.java
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/sensor_dht11.java
-/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/sensor_flame01.java
+/home/janio/Documents/Projects/tcc/producer/src/main/java/dev/janio/producer/environment/EnvironmentProperties.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/SensorMq2.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/DetectorDeIncendio.java
+/home/janio/Documents/Projects/tcc/producer/src/main/java/dev/janio/producer/environment/DefaultEnvironmentProperties.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/SensorDht11.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/SensorMq9.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/SensorFlame01.java
+/home/janio/Documents/Projects/tcc/producer/target/generated-sources/avro/dev/janio/SensorDht22.java
+/home/janio/Documents/Projects/tcc/producer/src/main/java/dev/janio/producer/ProducerApp.java

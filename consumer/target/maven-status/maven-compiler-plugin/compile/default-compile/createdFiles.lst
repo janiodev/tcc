@@ -1,0 +1,15 @@
+dev/janio/SensorMq2$Builder.class
+dev/janio/SensorDht22.class
+dev/janio/SensorMq2.class
+dev/janio/SensorFlame01.class
+dev/janio/consumer/environment/EnvironmentProperties.class
+dev/janio/consumer/ConsumerApp.class
+dev/janio/DetectorDeIncendio.class
+dev/janio/SensorDht22$Builder.class
+dev/janio/DetectorDeIncendio$Builder.class
+dev/janio/SensorMq9$Builder.class
+dev/janio/SensorDht11$Builder.class
+dev/janio/SensorMq9.class
+dev/janio/SensorDht11.class
+dev/janio/SensorFlame01$Builder.class
+dev/janio/consumer/environment/DefaultEnvironmentProperties.class
